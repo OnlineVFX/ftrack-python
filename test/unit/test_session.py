@@ -1540,6 +1540,46 @@ def test_custom_headers_session():
     )
 
 
+def test_external_requests_session():
+    """Make sure external Requests Session is used."""
+    req_session = requests.Session()
+    ft_session = ftrack_api.Session(requests_session=req_session)
+
+    assert ft_session._request is req_session
+
+
+def test_external_session_custom_cookies():
+    """External Requests Session should contain custom cookies."""
+    req_session = requests.Session()
+    ft_session = ftrack_api.Session(
+        cookies={"abc": "def"}, requests_session=req_session
+    )
+    cookies_dict = requests.utils.dict_from_cookiejar(req_session.cookies)
+
+    assert ft_session._request is req_session
+    assert cookies_dict.get("abc") == "def"
+
+
+def test_external_session_custom_headers():
+    """External Requests Session should contain custom headers."""
+    req_session = requests.Session()
+    ft_session = ftrack_api.Session(
+        headers={"abc": "def"}, requests_session=req_session
+    )
+
+    assert ft_session._request is req_session
+    assert req_session.headers.get("abc") == "def"
+
+
+def test_external_session_strict_api_header():
+    """External Requests Session should respect 'strict_api' argument."""
+    req_session = requests.Session()
+    ft_session = ftrack_api.Session(strict_api=True, requests_session=req_session)
+
+    assert ft_session._request is req_session
+    assert req_session.headers.get("ftrack-strict-api") == "true"
+
+
 def test_restricted_projections(mocked_schema_session):
     """Ensure properties marked with restricted_projection are not added as properties"""
     entity = mocked_schema_session.create(
