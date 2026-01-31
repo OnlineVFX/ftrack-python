@@ -13,6 +13,7 @@ packages = [
 
 [tool.poetry-dynamic-versioning]
 enable = true
+tagged-metadata = true
 
 [tool.poetry-dynamic-versioning.substitution]
 files = ["source/ftrack_api/_version.py"]
